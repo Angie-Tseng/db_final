@@ -1,0 +1,21 @@
+html
+    style
+        include ../css/layout.css
+    header
+        title Layout
+    body
+        .sidenav
+            a(href='/index') 借貸管理系統
+            a(href='/new_debter') 新增債務人資料
+            a(href='#') 新增債權人資料
+            a(href='#') 新增放款類型
+            a(href='/new_project') 新增放款案件
+            a(href='#') 新增還款紀錄
+            a(href='#') 查詢還款紀錄
+            a(href='#') 查詢案件明細
+            a(href='/sql') 使用SQL查詢
+        
+        .content
+            block content
+                h2 CSS Template
+                p A full-height, fixed sidenav and content.

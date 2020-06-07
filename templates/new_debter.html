@@ -1,0 +1,43 @@
+<html><style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the side navigation */
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+}
+
+
+/* Side navigation links */
+.sidenav a {
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color on hover */
+.sidenav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Style the content */
+.content {
+  margin-left: 200px;
+  padding-left: 50px;
+  padding-top:  20px;
+}</style><header><title>Layout</title></header><body><div class="sidenav"><a href="/index">借貸管理系統</a><a href="/new_debter">新增債務人資料</a><a href="#">新增債權人資料</a><a href="#">新增放款類型</a><a href="/new_project">新增放款案件</a><a href="#">新增還款紀錄</a><a href="#">查詢還款紀錄</a><a href="#">查詢案件明細</a><a href="/sql">使用SQL查詢</a></div><div class="content"><h1>新增債務人資料</h1><p>姓名　　　　<input name="name"/></p><p>身分證字號　<input name="id"/></p><p>公司名稱　　<input name="company"/></p><p>戶籍地址　　<input name="residence_addr"/></p><p>通訊地址　　<input name="mailing_addr"/></p><p>家用電話　　<input name="tel" type="tel"/></p><p>手機號碼　　<input name="mobile"/></p><p>公司電話　　<input name="company_tel" type="tel"/></p><p>建檔日期　　<input name="date" type="date"/></p></div></body></html>
