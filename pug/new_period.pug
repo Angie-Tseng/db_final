@@ -1,0 +1,37 @@
+extends layout.pug
+
+block content
+    h1 新增還款紀錄
+
+    form(method="POST", action="")
+        div
+            p 案件編號　　　
+                input#TypeNumber(list='TypeNames', name='TypeNumber', autocomplete='off')
+                datalist#TypeNames
+                    | {% for typenumber, typename in types %}
+                    option(name="{{ typenumber }}", value="{{ typenumber }} {{ typename }}")
+                    | {% endfor %}
+
+            p 還款日期　　　
+                input(name='RepaymentDate', type='date', style="width:170px")
+            
+            p 還款（本金）　
+                input(name='GetPrinciple')
+
+            p 　　（利息）　
+                input(name='GetInterest')
+
+            p 還款方式　　　
+                input(name='RepaymentMethod')
+
+            p 備註　　　　　
+                textarea(name="Remark", rows="10")
+
+            p 
+                input(type='submit', value='送出')
+        br
+
+        div(style='overflow-x:auto;')
+            | {% for table in tables %}
+            | {{ table|safe }}
+            | {% endfor %}

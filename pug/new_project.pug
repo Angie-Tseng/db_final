@@ -7,21 +7,31 @@ block content
         div
 
             p 案件編號　
-                input#TypeName(list='TypeNames', name='TypeName')
+                input#TypeNumber(list='TypeNames', name='TypeNumber', autocomplete='off')
                 datalist#TypeNames
                     | {% for typenumber, typename in types %}
-                    | option(name={{ typenumber }}, value={{ typename }})
+                    option(name="{{ typenumber }}", value="{{ typenumber }} {{ typename }}")
                     | {% endfor %}
 
+            p 債務人　　
+                input#DebterID(list='Debters', name='DebterID', autocomplete='off')
+                datalist#Debters
+                    | {% for id, name in debters %}
+                    option(name="{{ id }}", value="{{ id }} {{ name }}")
+                    | {% endfor %}
 
-            | {% for typenumber, typename in types %}
-            | {{ typenumber }} {{ typename }}
-            | {% endfor %}
+            p 債權人　　
+                input#CreditorNumber(list='Creditors', name='CreditorNumber', autocomplete='off')
+                datalist#Creditors
+                    | {% for num, name in creditors %}
+                    option(name="{{ num }}", value="{{ num }} {{ name }}")
+                    | {% endfor %}
 
             p 開始日　　
-                input(name='StartDate', type='date')
+                input(name='StartDate', type='date', style="width:170px")
 
-            input(type='submit', value='送出')
+            p
+                input(type='submit', value='送出')
 
         br
 

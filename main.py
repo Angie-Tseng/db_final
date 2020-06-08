@@ -9,7 +9,7 @@ INPUT_DICT = {
     'DEBTER': ['ID', 'Name', 'CompanyName', 'ResidenceAddress', 'MailingAddress', 'TelPhoneNumber', 'MobilePhoneNumber', 'CompanyPhoneNumber'],
     'CREDITOR': ['Name', 'PhoneNumber'],
     'LOAN_PROJECT_TYPE': ['TypeName', 'PrinciplePerPeriod', 'InterestPerPeriod', 'NumberOfPeriod', 'TotalPrinciple', 'Remark'],
-    'LOAN_PROJECT': ['TypeNumber', 'DebterID', 'CreditorNumber', 'StartDate'],
+    'LOAN_PROJECT': ['TypeNumber', 'DebterID', 'CreditorNumber', 'StartDate', 'OutstandingAmount'],
     'LOAN_PERIOD': ['ProjectNumber', 'DueDate', 'RepaymentDate', 'GetPrinciple', 'GetInterest', 'RepaymentMethod', 'Remark'],
     'OWE': ['DebterID', 'CreditorNumber', 'TotalOutstanding']
 }
@@ -42,27 +42,28 @@ def get_query(query):
     return df
 
 
-def insert_data(table):
+def insert_data(table, values = None):
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
     cols = INPUT_DICT[table]
-    values = [request.values[col] for col in cols]
-    if table == 'DEBTER':
-        values.append(datetime.date.today())
-        cols.append('EditDate')
-
-    elif table == 'LOAN_PROJECT':
-        exe = cur.execute("select TotalPrinciple from LOAN_PROJECT_TYPE where TypeNumber = {};".format(request.values['TypeNumber']))
+    
+    if table == 'LOAN_PROJECT':
+        exe = cur.execute("select TotalPrinciple from LOAN_PROJECT_TYPE where TypeNumber = {};".format(values[0]))
         temp = dict(cur.fetchone())
-        for k in temp:
+        for key in temp:
             temp = temp[key]
             break
-        print(temp)
         values.append(temp)
-        cols.append('OutstandingAmount')
-        
+        print(cols)
+        print(values)
+    
+    else:
+        values = [request.values[col] for col in cols]
+        if table == 'DEBTER':
+            values.append(datetime.date.today())
+            cols.append('EditDate')
 
     query = 'INSERT INTO ' + table + '(' + ','.join(cols) + ')' + ' VALUES(' + ','.join(['?' for col in cols]) + ')'
     print(query)
@@ -107,20 +108,54 @@ def new_project_type():
 
 @app.route('/new_project', methods=['GET', 'POST'])
 def new_project():
+    types = get_query("select TypeNumber,TypeName from LOAN_PROJECT_TYPE;").values.tolist()
+    debters = get_query("select ID, Name from DEBTER;").values.tolist()
+    creditors = get_query("select CreditorNumber, Name from CREDITOR;").values.tolist()
+
     if request.method == 'POST':
         # insert_data('LOAN_PROJECT_TYPE', ['TypeName', 'PrinciplePerPeriod', 'InterestPerPeriod', 'NumberOfPeriod', 'TotalPrinciple', 'Remark'])
-        insert_data('LOAN_PROJECT')
-    
-    types = get_query("select TypeNumber,TypeName from LOAN_PROJECT_TYPE;")
-    table = get_query("select * from LOAN_PROJECT;")
-    print(types.values.tolist())
+        # print(request.values['TypeNumber'], request.values['DebterID'], request.values['CreditorNumber'])
+        values = []
+        for temp in types:
+            if f'{temp[0]} {temp[1]}' == request.values['TypeNumber']: values.append(temp[0])
+        for temp in debters:
+            if f'{temp[0]} {temp[1]}' == request.values['DebterID']: values.append(temp[0])
+        for temp in creditors:
+            if f'{temp[0]} {temp[1]}' == request.values['CreditorNumber']: values.append(temp[0])
 
+        values.append(request.values['StartDate'])
+        insert_data('LOAN_PROJECT', values)
+
+    table = get_query("select * from LOAN_PROJECT;")
     return render_template(
                 'new_project.html',
-                types=types.values.tolist(),
+                types=types,
+                debters=debters,
+                creditors=creditors,
                 tables=[table.to_html(classes='data')]
             )
 
+##### New Period
+@app.route('/new_period', methods=['GET', 'POST'])
+def new_period():
+    types = get_query("select TypeNumber,TypeName from LOAN_PROJECT_TYPE;").values.tolist()
+    table = get_query("select * from LOAN_PERIOD;")
+    return render_template(
+                'new_period.html',
+                types=types,
+                tables=[table.to_html(classes='data')]
+            )
+
+##### Search Repayment Record
+@app.route('/repayment_record', methods=['GET', 'POST'])
+def repayment_record():
+    types = get_query("select TypeNumber,TypeName from LOAN_PROJECT_TYPE;").values.tolist()
+    table = get_query("select * from LOAN_PERIOD;")
+    return render_template(
+                'repayment_record.html',
+                types=types,
+                tables=[table.to_html(classes='data')]
+        )
 
 ##### SQL Query
 @app.route('/sql', methods=['GET', 'POST'])
