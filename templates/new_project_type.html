@@ -44,10 +44,16 @@ body {
 
 table {
   border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
 }
 
-table, th, td {
-  border: 1px solid black;
-}</style><header><title>Layout</title></header><body><div class="sidenav"><a href="/">借貸管理系統</a><a href="/new_debter">新增債務人資料</a><a href="/new_creditor">新增債權人資料</a><a href="/new_project_type">新增放款類型</a><a href="#">新增放款案件</a><a href="#">新增還款紀錄</a><a href="#">查詢還款紀錄</a><a href="#">查詢案件明細</a><a href="/sql">使用SQL查詢</a></div><div class="content"><h1>新增案件類型</h1><form method="POST" action=""><p>類型名稱　<input name="TypeName"/></p><p>放款金額　<input name="TotalPrinciple"/></p><p>期數　　　<input name="NumberOfPeriod"/></p><p>月繳本金　<input name="PrinciplePerPeriod"/></p><p>月繳利息　<input name="InterestPerPeriod"/></p><p>備註　　　<input name="Remark"/></p><input type="submit" value="送出"/><p>{% for table in tables %}
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}</style><header><title>Layout</title></header><body><div class="sidenav"><a href="/">借貸管理系統</a><a href="/new_debter">新增債務人資料</a><a href="/new_creditor">新增債權人資料</a><a href="/new_project_type">新增放款類型</a><a href="/new_project">新增放款案件</a><a href="#">新增還款紀錄</a><a href="#">查詢還款紀錄</a><a href="#">查詢案件明細</a><a href="/sql">使用SQL查詢</a></div><div class="content"><h1>新增案件類型</h1><form method="POST" action=""><div><p>類型名稱　<input name="TypeName"/></p><p>放款金額　<input name="TotalPrinciple"/></p><p>期數　　　<input name="NumberOfPeriod"/></p><p>月繳本金　<input name="PrinciplePerPeriod"/></p><p>月繳利息　<input name="InterestPerPeriod"/></p><p>備註　　　<input name="Remark"/></p><input type="submit" value="送出"/></div><br/><div style="overflow-x:auto;">{% for table in tables %}
 {{ table|safe }}
-{% endfor %}</p></form></div></body></html>
+{% endfor %}</div></form></div></body></html>
