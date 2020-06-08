@@ -41,3 +41,11 @@ body {
   padding-left: 50px;
   padding-top:  20px;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+}

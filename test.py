@@ -1,31 +1,24 @@
-from flask import Flask, request, render_template
-app = Flask(__name__)
+import sqlite3
+import pandas as pd
 
-@app.route('/index')
-def index():
-    return render_template('index.html')
+conn = sqlite3.connect('database.db')
+conn.row_factory = sqlite3.Row
 
-@app.route('/new_debter')
-def new_debter():
-    return render_template('new_debter.html')
+cur = conn.cursor()
+exe = cur.execute("select * from LOAN_PERIOD;")
 
-@app.route('/sql', methods=['GET', 'POST'])
-def sql_query():
-    if request.method == 'POST' and request.values['query'] != '':
-        return render_template('sql.html', query_result=request.values['query'])
-
-    return render_template('sql.html')
+rows = cur.fetchall()
+conn.close()
 
 
+d = {}
+for row in rows:
+    temp = dict(row)
+    for key in temp:
+        if key in d:
+            d[key].append(temp[key])
+        else:
+            d[key] = [temp[key]]
 
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        if request.values['username'] != '':
-            return 'Hello ' + request.values['username'] + '\n' + render_template('test.html')
-    return render_template('test.html')
-
-
-if __name__ == '__main__':
-    app.debug = True
-    app.run()
+df = pd.DataFrame(d)
+print(df)

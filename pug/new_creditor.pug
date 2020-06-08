@@ -2,10 +2,14 @@ extends layout.pug
 
 block content
     form(method="POST", action="")
-        h1 使用SQL查詢
-        p
-            textarea(name="query", cols="100", rows="10", placeholder="input SQL query")
-    
+        h1 新增債權人
+
+        p 姓名　　　
+            input(name='Name')
+
+        p 聯絡電話　
+            input(name='PhoneNumber')
+
         input(type='submit', value='送出')
         
         p

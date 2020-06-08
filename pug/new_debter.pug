@@ -1,28 +1,37 @@
 extends layout.pug
 
 block content
-    h1 新增債務人資料
+    form(method="POST", action="")
+        h1 新增債務人資料
 
-    p 姓名　　　　
-        input(name='name')
-    
-    p 身分證字號　
-        input(name='id')
+        p 姓名　　　　
+            input(name='Name')
+        
+        p 身分證字號　
+            input(name='ID')
 
-    p 公司名稱　　
-        input(name='company')
+        p 公司名稱　　
+            input(name='CompanyName')
 
-    p 戶籍地址　　
-        input(name='residence_addr')
-    
-    p 通訊地址　　
-        input(name='mailing_addr')
+        p 戶籍地址　　
+            input(name='ResidenceAddress')
+        
+        p 通訊地址　　
+            input(name='MailingAddress')
 
-    p 家用電話　　
-        input(name='tel', type='tel')
+        p 家用電話　　
+            input(name='TelPhoneNumber', type='tel')
 
-    p 手機號碼　　
-        input(name='mobile')
-    
-    p 公司電話　　
-        input(name='company_tel', type='tel')
+        p 手機號碼　　
+            input(name='MobilePhoneNumber')
+        
+        p 公司電話　　
+            input(name='CompanyPhoneNumber', type='tel')
+
+        input(type='submit', value='送出')
+
+        p
+            | {% for table in tables %}
+            //- | {{titles[loop.index]}}
+            | {{ table|safe }}
+            | {% endfor %}

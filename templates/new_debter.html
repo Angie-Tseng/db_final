@@ -40,4 +40,14 @@ body {
   margin-left: 200px;
   padding-left: 50px;
   padding-top:  20px;
-}</style><header><title>Layout</title></header><body><div class="sidenav"><a href="/index">借貸管理系統</a><a href="/new_debter">新增債務人資料</a><a href="#">新增債權人資料</a><a href="#">新增放款類型</a><a href="/new_project">新增放款案件</a><a href="#">新增還款紀錄</a><a href="#">查詢還款紀錄</a><a href="#">查詢案件明細</a><a href="/sql">使用SQL查詢</a></div><div class="content"><h1>新增債務人資料</h1><p>姓名　　　　<input name="name"/></p><p>身分證字號　<input name="id"/></p><p>公司名稱　　<input name="company"/></p><p>戶籍地址　　<input name="residence_addr"/></p><p>通訊地址　　<input name="mailing_addr"/></p><p>家用電話　　<input name="tel" type="tel"/></p><p>手機號碼　　<input name="mobile"/></p><p>公司電話　　<input name="company_tel" type="tel"/></p><p>建檔日期　　<input name="date" type="date"/></p></div></body></html>
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+}</style><header><title>Layout</title></header><body><div class="sidenav"><a href="/">借貸管理系統</a><a href="/new_debter">新增債務人資料</a><a href="/new_creditor">新增債權人資料</a><a href="/new_project_type">新增放款類型</a><a href="#">新增放款案件</a><a href="#">新增還款紀錄</a><a href="#">查詢還款紀錄</a><a href="#">查詢案件明細</a><a href="/sql">使用SQL查詢</a></div><div class="content"><form method="POST" action=""><h1>新增債務人資料</h1><p>姓名　　　　<input name="Name"/></p><p>身分證字號　<input name="ID"/></p><p>公司名稱　　<input name="CompanyName"/></p><p>戶籍地址　　<input name="ResidenceAddress"/></p><p>通訊地址　　<input name="MailingAddress"/></p><p>家用電話　　<input name="TelPhoneNumber" type="tel"/></p><p>手機號碼　　<input name="MobilePhoneNumber"/></p><p>公司電話　　<input name="CompanyPhoneNumber" type="tel"/></p><input type="submit" value="送出"/><p>{% for table in tables %}
+{{ table|safe }}
+{% endfor %}</p></form></div></body></html>
