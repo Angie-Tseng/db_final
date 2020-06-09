@@ -204,6 +204,7 @@ def project_type():
 def project_type_edit(NUMBER):
     if request.method == 'POST':
         edit_data('LOAN_PROJECT_TYPE', edit=True, pr_key=[NUMBER])
+
         return redirect(url_for('project_type'))
     table = get_query("select * from LOAN_PROJECT_TYPE;")
     data = get_query("select {} from LOAN_PROJECT_TYPE where TypeNumber = {}".format(','.join(INPUT_DICT['LOAN_PROJECT_TYPE']), NUMBER))
