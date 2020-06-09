@@ -1,0 +1,47 @@
+extends layout.pug
+
+block content
+    h1 查詢還款紀錄
+
+    form(method="POST", action="")
+        div
+            p 查詢案件編號　
+                input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
+                datalist#ProjectNumbers
+                    | {% for number, date in projects %}
+                    option(name="{{ number }}", value="{{ number }} | {{ date }}")
+                    | {% endfor %}
+                
+                input(type='submit', value='送出')
+        br
+
+        div
+            | {% if show %}
+            p 案件編號　　　{{ project_number }}
+
+            p 開始日期　　　{{ project_date }}
+
+            p 已繳款總金額　{{ total_repayment }}　元
+
+            p 剩餘繳款金額　{{ total_outstanding }}　元
+
+            | {% endif %}
+
+        div(style='overflow-x:auto;')
+            | {% if show %}
+            table
+                thead
+                    tr
+                    | {% for column in columns %}
+                    th {{ column }}
+                    | {% endfor %}
+
+                tbody
+                    | {% for row in table %}
+                    tr
+                        | {% for item in row %}
+                        td {{ item }}
+                        | {% endfor %}
+                    | {% endfor %}
+
+            | {% endif %}

@@ -1,0 +1,48 @@
+extends layout.pug
+
+block content
+    h1 管理債權人資料
+    
+    form(method="POST", action="")
+        div
+            | {% if edit %}
+            p 姓名　　　
+                input(name='Name', style="width:200px", value="{{ data[0] }}")
+
+            p 聯絡電話　
+                input(name='PhoneNumber', style="width:200px", value="{{ data[1] }}")
+            
+            | {% else %}
+            p 姓名　　　
+                input(name='Name', style="width:200px")
+
+            p 聯絡電話　
+                input(name='PhoneNumber', style="width:200px")
+
+            | {% endif %}
+            p    
+                input(type='submit', value='送出')
+        br
+        
+        div(style='overflow-x:auto;')
+            table
+                thead
+                    tr
+                        | {% for column in columns %}
+                        th {{ column }}
+                        | {% endfor %}
+                        th
+                        th 
+
+                tbody
+                    | {% for row in table %}
+                    tr
+                        | {% for item in row %}
+                        td {{ item }}
+                        | {% endfor %}
+
+                        td
+                            a(href="/creditor/edit/{{ row[0] }}") 編輯
+                        td
+                            a(href="/creditor/delete/{{ row[0] }}") 刪除
+                    | {% endfor %}

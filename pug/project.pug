@@ -1,0 +1,53 @@
+extends layout.pug
+
+block content
+    h1 管理放款案件
+
+    form(method="POST", action="")
+        div
+
+            p 案件編號　
+                input#TypeNumber(list='TypeNames', name='TypeNumber', autocomplete='off', style="width:200px")
+                datalist#TypeNames
+                    | {% for typenumber, typename, money, period in types %}
+                    option(name="{{ typenumber }}", value="{{ typenumber }} {{ typename }}: ${{ money }}, {{ period }}期")
+                    | {% endfor %}
+
+            p 債務人　　
+                input#DebterID(list='Debters', name='DebterID', autocomplete='off', style="width:200px")
+                datalist#Debters
+                    | {% for id, name in debters %}
+                    option(name="{{ id }}", value="{{ id }} {{ name }}")
+                    | {% endfor %}
+
+            p 債權人　　
+                input#CreditorNumber(list='Creditors', name='CreditorNumber', autocomplete='off', style="width:200px")
+                datalist#Creditors
+                    | {% for num, name in creditors %}
+                    option(name="{{ num }}", value="{{ num }} {{ name }}")
+                    | {% endfor %}
+
+            p 開始日　　
+                input(name='StartDate', type='date', style="width:200px")
+
+            p
+                input(type='submit', value='送出')
+
+        br
+
+        
+        div(style='overflow-x:auto;')
+            table
+                thead
+                    tr
+                    | {% for column in columns %}
+                    th {{ column }}
+                    | {% endfor %}
+
+                tbody
+                    | {% for row in table %}
+                    tr
+                        | {% for item in row %}
+                        td {{ item }}
+                        | {% endfor %}
+                    | {% endfor %}

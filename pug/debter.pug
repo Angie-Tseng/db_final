@@ -1,0 +1,87 @@
+extends layout.pug
+
+block content
+    h1 管理債務人資料
+    
+    form(method="POST", action="")
+        div
+            | {% if edit %}
+            p 姓名　　　　
+                input(name='Name', style="width:200px", value="{{ data[0] }}")
+            
+            p 身分證字號　
+                input(name='ID', style="width:200px", value="{{ data[1] }}")
+
+            p 公司名稱　　
+                input(name='CompanyName', style="width:200px", value="{{ data[2] }}")
+
+            p 戶籍地址　　
+                input(name='ResidenceAddress', style="width:200px", value="{{ data[3] }}")
+            
+            p 通訊地址　　
+                input(name='MailingAddress', style="width:200px", value="{{ data[4] }}")
+
+            p 家用電話　　
+                input(name='TelPhoneNumber', type='tel', style="width:200px", value="{{ data[5] }}")
+
+            p 手機號碼　　
+                input(name='MobilePhoneNumber', style="width:200px", value="{{ data[6] }}")
+            
+            p 公司電話　　
+                input(name='CompanyPhoneNumber', type='tel', style="width:200px", value="{{ data[7] }}")
+
+            
+            | {% else %}
+            p 姓名　　　　
+                input(name='Name', style="width:200px")
+            
+            p 身分證字號　
+                input(name='ID', style="width:200px")
+
+            p 公司名稱　　
+                input(name='CompanyName', style="width:200px")
+
+            p 戶籍地址　　
+                input(name='ResidenceAddress', style="width:200px")
+            
+            p 通訊地址　　
+                input(name='MailingAddress', style="width:200px")
+
+            p 家用電話　　
+                input(name='TelPhoneNumber', type='tel', style="width:200px")
+
+            p 手機號碼　　
+                input(name='MobilePhoneNumber', style="width:200px")
+            
+            p 公司電話　　
+                input(name='CompanyPhoneNumber', type='tel', style="width:200px")
+
+            | {% endif %}
+            p
+                input(type='submit', value='送出')
+
+        br
+
+        
+        div(style='overflow-x:auto;')
+            table
+                thead
+                    tr
+                    | {% for column in columns %}
+                    th {{ column }}
+                    | {% endfor %}
+                    th
+                    th
+
+                tbody
+                    | {% for row in table %}
+                    tr
+                        | {% for item in row %}
+                        td {{ item }}
+                        | {% endfor %}
+
+                        td
+                            a(href="/debter/edit/{{ row[0] }}") 編輯
+                        td
+                            a(href="/debter/delete/{{ row[0] }}") 刪除
+                    | {% endfor %}

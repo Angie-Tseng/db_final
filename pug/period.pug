@@ -1,0 +1,49 @@
+extends layout.pug
+
+block content
+    h1 管理還款紀錄
+
+    form(method="POST", action="")
+        div
+            p 案件編號　　　
+                input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
+                datalist#ProjectNumbers
+                    | {% for number, date in projects %}
+                    option(name="{{ number }}", value="{{ number }}: {{ date }}")
+                    | {% endfor %}
+
+            p 還款日期　　　
+                input(name='RepaymentDate', type='date', style="width:200px")
+            
+            p 還款（本金）　
+                input(name='GetPrinciple', style="width:200px")
+
+            p 　　（利息）　
+                input(name='GetInterest', style="width:200px")
+
+            p 還款方式　　　
+                input(name='RepaymentMethod', style="width:200px")
+
+            p 備註　　　　　
+                textarea(name="Remark", rows="10", style="width:200px")
+
+            p 
+                input(type='submit', value='送出')
+        br
+
+        
+        div(style='overflow-x:auto;')
+            table
+                thead
+                    tr
+                    | {% for column in columns %}
+                    th {{ column }}
+                    | {% endfor %}
+
+                tbody
+                    | {% for row in table %}
+                    tr
+                        | {% for item in row %}
+                        td {{ item }}
+                        | {% endfor %}
+                    | {% endfor %}

@@ -1,0 +1,73 @@
+extends layout.pug
+
+block content
+    h1 管理案件類型
+
+    form(method="POST", action="")
+        div
+            | {% if edit %}
+            p 類型名稱　
+                input(name='TypeName', style="width:200px", value="{{ data[0] }}")
+
+            p 放款金額　
+                input(name='TotalPrinciple', style="width:200px", value="{{ data[1] }}")
+
+            p 期數　　　
+                input(name='NumberOfPeriod', style="width:200px", value="{{ data[2] }}")
+
+            p 月繳本金　
+                input(name='PrinciplePerPeriod', style="width:200px", value="{{ data[3] }}")
+
+            p 月繳利息　
+                input(name='InterestPerPeriod', style="width:200px", value="{{ data[4] }}")
+
+            p 備註　　　
+                input(name='Remark', style="width:200px", value="{{ data[5] }}")
+
+            | {% else %}
+            p 類型名稱　
+                input(name='TypeName', style="width:200px")
+
+            p 放款金額　
+                input(name='TotalPrinciple', style="width:200px")
+
+            p 期數　　　
+                input(name='NumberOfPeriod', style="width:200px")
+
+            p 月繳本金　
+                input(name='PrinciplePerPeriod', style="width:200px")
+
+            p 月繳利息　
+                input(name='InterestPerPeriod', style="width:200px")
+
+            p 備註　　　
+                input(name='Remark', style="width:200px")
+
+            | {% endif %}
+            p
+                input(type='submit', value='送出')
+
+        br
+        
+        div(style='overflow-x:auto;')
+            table
+                thead
+                    tr
+                    | {% for column in columns %}
+                    th {{ column }}
+                    | {% endfor %}
+                    th
+                    th
+
+                tbody
+                    | {% for row in table %}
+                    tr
+                        | {% for item in row %}
+                        td {{ item }}
+                        | {% endfor %}
+
+                        td
+                            a(href="/project_type/edit/{{ row[0] }}") 編輯
+                        td
+                            a(href="/project_type/delete/{{ row[0] }}") 刪除
+                    | {% endfor %}
