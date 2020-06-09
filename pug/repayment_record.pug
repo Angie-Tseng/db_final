@@ -8,8 +8,8 @@ block content
             p 查詢案件編號　
                 input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
                 datalist#ProjectNumbers
-                    | {% for number, date in projects %}
-                    option(name="{{ number }}", value="{{ number }} | {{ date }}")
+                    | {% for number in projects %}
+                    option(value="{{ number[0] }}")
                     | {% endfor %}
                 
                 input(type='submit', value='送出')
@@ -23,7 +23,7 @@ block content
 
             p 已繳款總金額　{{ total_repayment }}　元
 
-            p 剩餘繳款金額　{{ total_outstanding }}　元
+            //- p 剩餘繳款金額　{{ total_outstanding }}　元
 
             | {% endif %}
 

@@ -1,0 +1,14 @@
+extends layout.pug
+
+block content
+    h1 查詢案件明細
+    form(method="POST", action="")
+        div
+            p 查詢案件編號　
+                input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
+                datalist#ProjectNumbers
+                    | {% for number, date in projects %}
+                    option(name="{{ number }}", value="{{ number }}")
+                    | {% endfor %}
+                
+                input(type='submit', value='送出')

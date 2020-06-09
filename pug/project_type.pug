@@ -12,17 +12,14 @@ block content
             p 放款金額　
                 input(name='TotalPrinciple', style="width:200px", value="{{ data[1] }}")
 
+            p 年利率　　
+                input(name='InterestRate', style="width:200px", value="{{ data[2] }}")
+
             p 期數　　　
-                input(name='NumberOfPeriod', style="width:200px", value="{{ data[2] }}")
-
-            p 月繳本金　
-                input(name='PrinciplePerPeriod', style="width:200px", value="{{ data[3] }}")
-
-            p 月繳利息　
-                input(name='InterestPerPeriod', style="width:200px", value="{{ data[4] }}")
+                input(name='NumberOfPeriod', style="width:200px", value="{{ data[3] }}")
 
             p 備註　　　
-                input(name='Remark', style="width:200px", value="{{ data[5] }}")
+                input(name='Remark', style="width:200px", value="{{ data[4] }}")
 
             | {% else %}
             p 類型名稱　
@@ -31,14 +28,11 @@ block content
             p 放款金額　
                 input(name='TotalPrinciple', style="width:200px")
 
+            p 年利率　　
+                input(name='InterestRate', style="width:200px")
+
             p 期數　　　
                 input(name='NumberOfPeriod', style="width:200px")
-
-            p 月繳本金　
-                input(name='PrinciplePerPeriod', style="width:200px")
-
-            p 月繳利息　
-                input(name='InterestPerPeriod', style="width:200px")
 
             p 備註　　　
                 input(name='Remark', style="width:200px")

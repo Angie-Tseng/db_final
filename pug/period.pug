@@ -5,40 +5,60 @@ block content
 
     form(method="POST", action="")
         div
-            p 案件編號　　　
+            p 查詢案件編號　
                 input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
                 datalist#ProjectNumbers
-                    | {% for number, date in projects %}
-                    option(name="{{ number }}", value="{{ number }}: {{ date }}")
+                    | {% for number in projects %}
+                    option(value="{{ number[0] }}")
                     | {% endfor %}
-
-            p 還款日期　　　
-                input(name='RepaymentDate', type='date', style="width:200px")
-            
-            p 還款（本金）　
-                input(name='GetPrinciple', style="width:200px")
-
-            p 　　（利息）　
-                input(name='GetInterest', style="width:200px")
-
-            p 還款方式　　　
-                input(name='RepaymentMethod', style="width:200px")
-
-            p 備註　　　　　
-                textarea(name="Remark", rows="10", style="width:200px")
-
-            p 
+                
                 input(type='submit', value='送出')
         br
 
-        
+        div
+            | {% if edit %}
+            p 還款日期　　　
+                input(name='RepaymentDate', type='date', style="width:200px", value="{{ data[0] }}")
+            
+            p 還款（本金）　
+                input(name='GetPrinciple', style="width:200px", value="{{ data[1] }}")
+
+            p 　　（利息）　
+                input(name='GetInterest', style="width:200px", value="{{ data[2] }}")
+
+            p 還款方式　　　
+                input(name='RepaymentMethod', style="width:200px", value="{{ data[3] }}")
+
+            p 備註　　　　　
+                textarea(name="Remark", rows="10", style="width:200px", value="{{ data[4] }}")
+
+            p 
+                input(type='submit', value='送出')
+
+        | {% endif %}
+
+        div
+            | {% if show %}
+            p 案件編號　　　{{ project_number }}
+
+            p 開始日期　　　{{ project_date }}
+
+            p 已繳款總金額　{{ total_repayment }}　元
+
+            //- p 剩餘繳款金額　{{ total_outstanding }}　元
+
+            | {% endif %}
+
         div(style='overflow-x:auto;')
+            
+            | {% if show %}
             table
                 thead
                     tr
                     | {% for column in columns %}
                     th {{ column }}
                     | {% endfor %}
+                    th
 
                 tbody
                     | {% for row in table %}
@@ -46,4 +66,8 @@ block content
                         | {% for item in row %}
                         td {{ item }}
                         | {% endfor %}
+                        td
+                            a(href="/period_edit/{{ row[0] }}-{{ row[1] }}") 編輯
                     | {% endfor %}
+
+            | {% endif %}
