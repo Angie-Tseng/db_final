@@ -7,8 +7,40 @@ block content
             p 查詢案件編號　
                 input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
                 datalist#ProjectNumbers
-                    | {% for number, date in projects %}
-                    option(name="{{ number }}", value="{{ number }}")
+                    | {% for number in projects %}
+                    option(value="{{ number[0] }}")
                     | {% endfor %}
                 
                 input(type='submit', value='送出')
+        br
+
+        |{% for title, table, columns in tables %}
+        div
+            | {% if show %}
+            //- table
+            //-     thead
+            //-         tr
+            //-         th(style='text-align: center') {{ title }}
+            table
+                thead
+                    tr
+                    th(colspan='{{ columns|length }}',style='text-align: center') {{ title }}
+                tbody
+                    tr
+                    | {% for column in columns %}
+                    td {{ column }}
+                    | {% endfor %}
+
+                    | {% for row in table %}
+                    tr
+                        | {% for item in row %}
+                        td {{ item }}
+                        | {% endfor %}
+                    | {% endfor %}
+
+            | {% endif %}
+        | {% endfor %}
+
+        | {% if show %}
+        p 日期： {{ date }}
+        | {% endif %}

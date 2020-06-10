@@ -37,17 +37,17 @@ block content
 
         | {% endif %}
 
-        div
-            | {% if show %}
-            p 案件編號　　　{{ project_number }}
+        //- div
+        //-     | {% if show %}
+        //-     p 案件編號　　　{{ project_number }}
 
-            p 開始日期　　　{{ project_date }}
+        //-     p 開始日期　　　{{ project_date }}
 
-            p 已繳款總金額　{{ total_repayment }}　元
+        //-     p 已繳款總金額　{{ total_repayment }}　元
 
-            //- p 剩餘繳款金額　{{ total_outstanding }}　元
+        //-     //- p 剩餘繳款金額　{{ total_outstanding }}　元
 
-            | {% endif %}
+        //-     | {% endif %}
 
         div(style='overflow-x:auto;')
             

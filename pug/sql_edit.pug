@@ -1,0 +1,18 @@
+extends layout.pug
+
+block content
+    form(method="POST", action="")
+        h1 使用SQL新增、編輯、刪除資料
+        p
+            textarea(name="query", cols="100", rows="10", placeholder="input SQL query")
+    
+        input(type='submit', value='送出')
+        
+        div
+            | {% if error %}
+            p 錯誤訊息
+            p {{ msg }}
+            | {% endif %}
+            | {% if success %}
+            p 修改成功
+            | {% endif %}

@@ -1,0 +1,32 @@
+extends layout.pug
+
+block content
+    form(method="POST", action="")
+        h1 使用SQL查詢
+        p
+            textarea(name="query", cols="100", rows="10", placeholder="input SQL query")
+    
+        input(type='submit', value='送出')
+        
+        div
+            | {% if error %}
+            p 錯誤訊息
+            p {{ msg }}
+            | {% endif %}
+
+
+        div(style='overflow-x:auto;')
+            table
+                thead
+                    tr
+                    | {% for column in columns %}
+                    th {{ column }}
+                    | {% endfor %}
+
+                tbody
+                    | {% for row in table %}
+                    tr
+                        | {% for item in row %}
+                        td {{ item }}
+                        | {% endfor %}
+                    | {% endfor %}
