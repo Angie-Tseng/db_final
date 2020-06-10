@@ -29,7 +29,7 @@ def get_query(query , get_col=False):
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    exe = cur.execute(query)
+    cur.execute(query)
     rows = cur.fetchall()
     conn.close()
 
@@ -324,11 +324,12 @@ def project_delete(NUMBER):
 @app.route('/period', methods=['GET', 'POST'])
 def period():
     projects = get_query("select ProjectNumber from LOAN_PROJECT;")
-    if request.method == 'POST' and request.values['ProjectNumber'] != '':
-        table = get_query("select * from LOAN_PERIOD where ProjectNumber = {};".format(request.values['ProjectNumber']))
-        total_repayment = sum([(table[i][6]+table[i][7]) for i in range(len(table))])
-        date = get_query("select StartDate from LOAN_PROJECT where ProjectNumber = {}".format(request.values['ProjectNumber']))[0][0]
-        return redirect(url_for('period_show', PROJECT=request.values['ProjectNumber']))
+    try:
+        if request.method == 'POST' and request.values['ProjectNumber'] != '':
+            get_query("select * from LOAN_PERIOD where ProjectNumber = {};".format(request.values['ProjectNumber']))
+            return redirect(url_for('period_show', PROJECT=request.values['ProjectNumber']))
+    except:
+        pass
     
     return render_template(
                 'period.html',
@@ -340,8 +341,13 @@ def period():
 ##### Show Periods of the Project
 @app.route('/period_show/<PROJECT>', methods=['GET', 'POST'])
 def period_show(PROJECT):
+    try:
+        if request.method == 'POST' and request.values['ProjectNumber'] != '':
+            get_query("select * from LOAN_PROJECT where ProjectNumber = {}".format(request.values['ProjectNumber']))
+            return redirect(url_for('period_show', PROJECT=request.values['ProjectNumber']))
+    except:
+        pass
     projects = get_query("select ProjectNumber from LOAN_PROJECT;")
-    # table = get_query("select PeriodNumber, DueDate, RepaymentDate, ExpectPrinciple, ExpectInterest, GetPrinciple, GetInterest, RepaymentMethod, Remark from LOAN_PERIOD where ProjectNumber = {};".format(PROJECT))
     table = get_query("select * from LOAN_PERIOD where ProjectNumber = {};".format(PROJECT))
     total_repayment = sum([(table[i][5]+table[i][6]) for i in range(len(table))])
     date = get_query("select StartDate from LOAN_PROJECT where ProjectNumber = {}".format(PROJECT))[0][0]
@@ -360,13 +366,20 @@ def period_show(PROJECT):
 @app.route('/period_edit/<PROJECT>-<PERIOD>', methods=['GET', 'POST'])
 def period_edit(PROJECT, PERIOD):
     if request.method == 'POST':
+        # show the other project
+        try:
+            if request.values['ProjectNumber'] != '':
+                get_query("select * from LOAN_PROJECT where ProjectNumber = {}".format(request.values['ProjectNumber']))
+                return redirect(url_for('period_show', PROJECT=request.values['ProjectNumber']))
+        except:
+            pass
+
+        # else: edit period
         edit_data('LOAN_PERIOD', [PROJECT, PERIOD], edit=True, pr_key=[PROJECT, PERIOD])
         return redirect(url_for('period_show', PROJECT=PROJECT))
     
     data = get_query("select RepaymentDate, GetPrinciple, GetInterest, RepaymentMethod, Remark from LOAN_PERIOD where ProjectNumber = {} AND PeriodNumber = {};".format(PROJECT, PERIOD))
-    print(data)
     projects = get_query("select ProjectNumber from LOAN_PROJECT;")
-    # table = get_query("select PeriodNumber, DueDate, RepaymentDate, ExpectPrinciple, ExpectInterest, GetPrinciple, GetInterest, RepaymentMethod, Remark from LOAN_PERIOD where ProjectNumber = {};".format(PROJECT))
     table = get_query("select * from LOAN_PERIOD where ProjectNumber = {};".format(PROJECT))
     total_repayment = sum([(table[i][5]+table[i][6]) for i in range(len(table))])
     date = get_query("select StartDate from LOAN_PROJECT where ProjectNumber = {}".format(PROJECT))[0][0]
@@ -387,33 +400,43 @@ def period_edit(PROJECT, PERIOD):
 ##### Search Repayment Record
 @app.route('/repayment_record', methods=['GET', 'POST'])
 def repayment_record():
-    projects = get_query("select ProjectNumber from LOAN_PROJECT;")
-    if request.method == 'POST' and request.values['ProjectNumber'] != '':
-        table = get_query("""
-            select RepaymentDate, RepaymentMethod, GetPrinciple+GetInterest
-            from
-            (select RepaymentDate, RepaymentMethod, GetPrinciple, GetInterest from LOAN_PERIOD where ProjectNumber = {})
-            where GetPrinciple+GetInterest > 0;
-            """.format(request.values['ProjectNumber']))
-        
-        if len(table) != 0:
-            total_repayment = sum([table[i][2] for i in range(len(table))])
-            date = get_query("select StartDate from LOAN_PROJECT where ProjectNumber = {}".format(request.values['ProjectNumber']))[0][0]
+    try:
+        if request.method == 'POST' and request.values['ID'] != '':
+            projects = get_query("""
+                select ProjectNumber from LOAN_PROJECT
+                where EXISTS
+                (select * from DEBTER
+                where ID='{}' and LOAN_PROJECT.DebterID=DEBTER.ID);
+            """.format(request.values['ID']))
 
-            return render_template(
-                        'repayment_record.html',
-                        projects=projects,
-                        show=True,
-                        project_number=request.values['ProjectNumber'],
-                        project_date=date,
-                        total_repayment=total_repayment,
-                        columns=['繳款日期', '繳款方式', '繳款金額'],
-                        table=table
-                )
+            inputs = []
+            for [PROJECT] in projects:
+                table = get_query("""
+                    select DueDate, RepaymentDate, RepaymentMethod, GetPrinciple+GetInterest, ExpectPrinciple+ExpectInterest-(GetPrinciple+GetInterest)
+                    from LOAN_PERIOD
+                    where ProjectNumber = {} AND DueDate <= DATE(\'now\');
+                """.format(PROJECT))
+                date = get_query("select StartDate from LOAN_PROJECT where ProjectNumber = {}".format(PROJECT))[0][0]
+                if len(table) != 0:
+                    total_repayment = get_query('select SUM(GetPrinciple+GetInterest) from LOAN_PERIOD where ProjectNumber = {} AND DueDate <= DATE(\'now\')'.format(PROJECT))[0][0]
+                    total_outstanding = get_query('select SUM(ExpectPrinciple+ExpectInterest)-SUM(GetPrinciple+GetInterest ) from LOAN_PERIOD where ProjectNumber = {} AND DueDate <= DATE(\'now\')'.format(PROJECT))[0][0]
+                else:
+                    total_repayment = 0
+                    total_outstanding = 0
+
+                inputs.append([PROJECT, table.copy(), date, total_repayment, total_outstanding])
+        
+        return render_template(
+            'repayment_record.html',
+            show=True,
+            columns=['繳款期限','繳款日期', '繳款方式', '已繳款金額', '剩餘繳款金額'],
+            inputs=inputs
+        )
     
+    except:
+        pass
     return render_template(
                 'repayment_record.html',
-                projects=projects,
                 show=False
         )
 
@@ -421,35 +444,37 @@ def repayment_record():
 @app.route('/project_record', methods=['GET', 'POST'])
 def project_record():
     projects = get_query("select ProjectNumber from LOAN_PROJECT;")
-    if request.method == 'POST' and request.values['ProjectNumber'] != '':
-        # Project Detail
-        project_detail = get_query("""
-            select
-            ProjectNumber, StartDate, Name, ResidenceAddress, MailingAddress, MobilePhoneNumber, TelPhoneNumber
-            from
-            (select ProjectNumber, StartDate, DebterID from LOAN_PROJECT where ProjectNumber = 33),
-            (select ID, Name, ResidenceAddress, MailingAddress, MobilePhoneNumber, TelPhoneNumber from DEBTER)
-            where ID = DebterID;
-        """.format(request.values['ProjectNumber']))
-
-        period_detail = get_query("""
-            select PeriodNumber, DueDate, ExpectPrinciple, ExpectInterest, ExpectPrinciple+ExpectInterest, RepaymentDate, GetPrinciple+GetInterest
-            from
-            (select PeriodNumber, DueDate, RepaymentDate, ExpectPrinciple, ExpectInterest, GetPrinciple, GetInterest from LOAN_PERIOD where ProjectNumber = {})
-            where GetPrinciple+GetInterest > 0;
+    try:
+        if request.method == 'POST' and request.values['ProjectNumber'] != '':
+            # Project Detail
+            project_detail = get_query("""
+                select
+                ProjectNumber, StartDate, Name, ResidenceAddress, MailingAddress, MobilePhoneNumber, TelPhoneNumber
+                from
+                (select ProjectNumber, StartDate, DebterID from LOAN_PROJECT where ProjectNumber = {}),
+                (select ID, Name, ResidenceAddress, MailingAddress, MobilePhoneNumber, TelPhoneNumber from DEBTER)
+                where ID = DebterID;
             """.format(request.values['ProjectNumber']))
-        
-        return render_template(
-                'project_record.html',
-                projects=projects,
-                show=True,
-                tables=[
-                    ['案件明細', project_detail, ['案件編號','開始日期','客戶姓名','戶籍地址','通訊地址','行動電話','家用電話']],
-                    ['統計表', period_detail, ['期數','應繳款日期','應繳本金','應繳利息','本期應繳金額','已繳款日期','已繳款金額']]
-                ],
-                date=datetime.date.today().strftime("%Y 年 %m 月 %d 日")
-            )
+            period_detail = get_query("""
+                select PeriodNumber, DueDate, ExpectPrinciple, ExpectInterest, ExpectPrinciple+ExpectInterest, RepaymentDate, GetPrinciple+GetInterest
+                from
+                (select PeriodNumber, DueDate, RepaymentDate, ExpectPrinciple, ExpectInterest, GetPrinciple, GetInterest from LOAN_PERIOD where ProjectNumber = {})
+                where GetPrinciple+GetInterest > 0;
+                """.format(request.values['ProjectNumber']))
 
+            return render_template(
+                    'project_record.html',
+                    projects=projects,
+                    show=True,
+                    tables=[
+                        ['案件明細', project_detail, ['案件編號','開始日期','客戶姓名','戶籍地址','通訊地址','行動電話','家用電話']],
+                        ['統計表', period_detail, ['期數','應繳款日期','應繳本金','應繳利息','本期應繳金額','已繳款日期','已繳款金額']]
+                    ],
+                    date=datetime.date.today().strftime("%Y / %m / %d")
+                )
+
+    except:
+        pass
     return render_template(
                 'project_record.html',
                 projects=projects,
@@ -487,5 +512,5 @@ def sql_edit():
 
 
 if __name__ == '__main__':
-    app.debug = True
+    # app.debug = True
     app.run()

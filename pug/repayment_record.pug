@@ -5,43 +5,62 @@ block content
 
     form(method="POST", action="")
         div
-            p 查詢案件編號　
-                input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
-                datalist#ProjectNumbers
-                    | {% for number in projects %}
-                    option(value="{{ number[0] }}")
-                    | {% endfor %}
+            //- p 查詢案件編號　
+            //-     input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
+            //-     datalist#ProjectNumbers
+            //-         | {% for number in projects %}
+            //-         option(value="{{ number[0] }}")
+            //-         | {% endfor %}
                 
+            p 債務人身份證字號　
+                input(name='ID', style="width:200px")
                 input(type='submit', value='送出')
         br
 
+        | {% for project_number, table, project_date, total_repayment, total_outstanding in inputs %}
         div
-            | {% if show %}
-            p 案件編號　　　{{ project_number }}
+            div
+                | {% if show %}
+                table
+                    thead
+                        tr
+                        th 案件編號
+                        th 開始日期
+                        th 已繳款總金額
+                        th 剩餘繳款金額
+                    tbody
+                        tr
+                            td {{ project_number }}
+                            td {{ project_date }}
+                            td {{ total_repayment }}　元
+                            td {{ total_outstanding }}　元
+                //- p 案件編號　　　{{ project_number }}
 
-            p 開始日期　　　{{ project_date }}
+                //- p 開始日期　　　{{ project_date }}
 
-            p 已繳款總金額　{{ total_repayment }}　元
+                //- p 已繳款總金額　{{ total_repayment }}　元
 
-            //- p 剩餘繳款金額　{{ total_outstanding }}　元
+                //- p 剩餘繳款金額　{{ total_outstanding }}　元
 
-            | {% endif %}
+                | {% endif %}
 
-        div(style='overflow-x:auto;')
-            | {% if show %}
-            table
-                thead
-                    tr
-                    | {% for column in columns %}
-                    th {{ column }}
-                    | {% endfor %}
-
-                tbody
-                    | {% for row in table %}
-                    tr
-                        | {% for item in row %}
-                        td {{ item }}
+            div()
+                | {% if show and table|length > 0 %}
+                table
+                    thead
+                        tr
+                        | {% for column in columns %}
+                        th {{ column }}
                         | {% endfor %}
-                    | {% endfor %}
 
-            | {% endif %}
+                    tbody
+                        | {% for row in table %}
+                        tr
+                            | {% for item in row %}
+                            td {{ item }}
+                            | {% endfor %}
+                        | {% endfor %}
+                | {% endif %}
+            br
+            br
+        | {% endfor %}
