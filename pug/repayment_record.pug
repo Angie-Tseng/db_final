@@ -17,6 +17,10 @@ block content
                 input(type='submit', value='送出')
         br
 
+
+        | {% if show %}
+        p 案件數量：{{ project_number }} 件
+        | {% endif %}
         | {% for project_number, table, project_date, total_repayment, total_outstanding in inputs %}
         div
             div

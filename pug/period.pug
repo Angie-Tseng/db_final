@@ -37,17 +37,14 @@ block content
 
         | {% endif %}
 
-        //- div
-        //-     | {% if show %}
-        //-     p 案件編號　　　{{ project_number }}
-
-        //-     p 開始日期　　　{{ project_date }}
-
-        //-     p 已繳款總金額　{{ total_repayment }}　元
-
-        //-     //- p 剩餘繳款金額　{{ total_outstanding }}　元
-
-        //-     | {% endif %}
+        | {% if show %}
+        p 最高應繳本金：{{ max_repayment[0] }} 元
+        p 最低應繳本金：{{ min_repayment[0] }} 元
+        p 平均每期應繳本金：{{ avg_repayment[0] }} 元
+        p 最高應繳利息：{{ max_repayment[1] }} 元
+        p 最低應繳利息：{{ min_repayment[1] }} 元
+        p 平均每期應繳利息：{{ avg_repayment[1] }} 元
+        | {% endif %}
 
         div(style='overflow-x:auto;')
             
