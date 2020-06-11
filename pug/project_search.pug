@@ -1,0 +1,11 @@
+extends layout.pug
+
+block content
+    h1 檢視放款案件
+
+    form(method="POST", action="")
+        div
+            p input#TypeNumber(list='TypeNames', name='TypeNumber', autocomplete='off', style="width:200px")
+                datalist#TypeNames
+                    option
+                    option(value="應還總額 >= ")

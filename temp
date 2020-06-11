@@ -1,0 +1,12 @@
+select ProjectNumber, SUM(ExpectPrinciple), SUM(ExpectInterest) from LOAN_PERIOD
+group by ProjectNumber
+having SUM(ExpectPrinciple) > 50000
+
+select PeriodNumber, (GetPrinciple+GetInterest)<(ExpectPrinciple+ExpectInterest) from LOAN_PERIOD where ProjectNumber=2
+
+select *
+from LOAN_PERIOD
+where ProjectNumber=2 and PeriodNumber in 
+(select PeriodNumber
+from LOAN_PERIOD where
+(GetPrinciple+GetInterest)=(ExpectPrinciple+ExpectInterest))

@@ -385,6 +385,9 @@ def period_edit(PROJECT, PERIOD):
         edit_data('LOAN_PERIOD', [PROJECT, PERIOD], edit=True, pr_key=[PROJECT, PERIOD])
         return redirect(url_for('period_show', PROJECT=PROJECT))
     
+    max_repayment = get_query("select MAX(ExpectPrinciple),MAX(ExpectInterest) from LOAN_PERIOD where ProjectNumber = {};".format(PROJECT))[0]
+    min_repayment = get_query("select MIN(ExpectPrinciple),MIN(ExpectInterest) from LOAN_PERIOD where ProjectNumber = {};".format(PROJECT))[0]
+    avg_repayment = get_query("select AVG(ExpectPrinciple),AVG(ExpectInterest) from LOAN_PERIOD where ProjectNumber = {};".format(PROJECT))[0]
     data = get_query("select RepaymentDate, GetPrinciple, GetInterest, RepaymentMethod, Remark from LOAN_PERIOD where ProjectNumber = {} AND PeriodNumber = {};".format(PROJECT, PERIOD))
     projects = get_query("select ProjectNumber from LOAN_PROJECT;")
     table = get_query("select * from LOAN_PERIOD where ProjectNumber = {};".format(PROJECT))
@@ -400,6 +403,9 @@ def period_edit(PROJECT, PERIOD):
             project_date=date,
             total_repayment=total_repayment,
             table=table,
+            max_repayment=max_repayment,
+            min_repayment=min_repayment,
+            avg_repayment=avg_repayment,
             data=data[0]
     )
 
@@ -425,11 +431,26 @@ def repayment_record():
 
             inputs = []
             for [PROJECT] in projects:
-                table = get_query("""
-                    select DueDate, RepaymentDate, RepaymentMethod, GetPrinciple+GetInterest, ExpectPrinciple+ExpectInterest-(GetPrinciple+GetInterest)
-                    from LOAN_PERIOD
-                    where ProjectNumber = {} AND DueDate <= DATE(\'now\');
-                """.format(PROJECT))
+                period_list = ','.join([str(i) for [i] in get_query("""
+                select PeriodNumber
+                from LOAN_PERIOD where
+                (GetPrinciple+GetInterest)=(ExpectPrinciple+ExpectInterest) and ProjectNumber={}""".format(PROJECT))])
+                print(period_list)
+                print(request.values['IsCleared']=='已結清')
+
+                if request.values['IsCleared']=='已結清':
+                    table = get_query("""
+                        select DueDate, RepaymentDate, RepaymentMethod, GetPrinciple+GetInterest, ExpectPrinciple+ExpectInterest-(GetPrinciple+GetInterest)
+                        from LOAN_PERIOD
+                        where ProjectNumber = {} AND DueDate <= DATE(\'now\') AND PeriodNumber in ({});
+                    """.format(PROJECT, period_list))
+                else:
+                    table = get_query("""
+                        select DueDate, RepaymentDate, RepaymentMethod, GetPrinciple+GetInterest, ExpectPrinciple+ExpectInterest-(GetPrinciple+GetInterest)
+                        from LOAN_PERIOD
+                        where ProjectNumber = {} AND DueDate <= DATE(\'now\') AND PeriodNumber not in ({});
+                    """.format(PROJECT, period_list))
+
                 date = get_query("select StartDate from LOAN_PROJECT where ProjectNumber = {}".format(PROJECT))[0][0]
                 if len(table) != 0:
                     total_repayment = get_query('select SUM(GetPrinciple+GetInterest) from LOAN_PERIOD where ProjectNumber = {} AND DueDate <= DATE(\'now\')'.format(PROJECT))[0][0]

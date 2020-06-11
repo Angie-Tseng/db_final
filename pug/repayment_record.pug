@@ -5,15 +5,13 @@ block content
 
     form(method="POST", action="")
         div
-            //- p 查詢案件編號　
-            //-     input#ProjectNumber(list='ProjectNumbers', name='ProjectNumber', autocomplete='off', style="width:200px")
-            //-     datalist#ProjectNumbers
-            //-         | {% for number in projects %}
-            //-         option(value="{{ number[0] }}")
-            //-         | {% endfor %}
                 
             p 債務人身份證字號　
                 input(name='ID', style="width:200px")
+                select(name='IsCleared')
+                    option(value=True) 已結清
+                    option(value=False) 未結清
+                
                 input(type='submit', value='送出')
         br
 
